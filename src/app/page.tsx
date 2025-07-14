@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-// Get backend URL from environment
+// ✅ Get backend URL from env (must be defined in Vercel)
 const BackendURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function GSTPage() {
@@ -27,11 +27,17 @@ export default function GSTPage() {
       const res = await fetch(`${BackendURL}/gst?price=${num}`);
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || "API Error");
+      if (!res.ok) {
+        throw new Error(data?.error || "API Error");
+      }
 
       setGstInfo(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
